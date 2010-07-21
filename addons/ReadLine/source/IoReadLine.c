@@ -56,6 +56,7 @@ IoReadLine *IoReadLine_proto(void *state)
 IoObject *IoReadLine_readLine(IoReadLine *self, IoObject *locals, IoMessage *m)
 {
 	const char *prompt = NULL;
+	const char *line = NULL;
 
 	if (IoMessage_argCount(m) == 0) {
 		IoObject *p = IoObject_rawGetSlot_(self, IOSYMBOL("prompt"));
@@ -68,7 +69,7 @@ IoObject *IoReadLine_readLine(IoReadLine *self, IoObject *locals, IoMessage *m)
 		prompt = IoMessage_locals_cStringArgAt_(m, locals, 0);
 	}
 
-	const char *line = readline(prompt);
+	line = readline(prompt);
 
 	if (line)
 		return IOSEQ((const unsigned char*)line, strlen(line));

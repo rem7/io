@@ -30,6 +30,8 @@ if(READLINE_FOUND)
 	)
 
 	# Now build the shared library
+	add_definitions("-D_WIN32 -DUSE_READLINE_STATIC")
+	#add_definitions("-D_WIN32")
 	add_library(IoReadLine SHARED ${SRCS})
 	add_dependencies(IoReadLine iovmall)
 	target_link_libraries(IoReadLine iovmall ${READLINE_LIBRARY})
