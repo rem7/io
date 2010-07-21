@@ -22,6 +22,7 @@ ReadLineTest := UnitTest clone do(
         assertTrue(historyFile exists)
         assertEquals("history line", historyFile readLines last)
 
+        historyFile close
         historyFile remove
     )
 
@@ -40,6 +41,7 @@ ReadLineTest := UnitTest clone do(
 
         assertEquals(list("history line", "history line 2"), historyFile readLines)
 
+        historyFile close
         historyFile remove
     )
 )
