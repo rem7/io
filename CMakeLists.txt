@@ -27,6 +27,9 @@ cmake_minimum_required(VERSION 2.8)
 # spaces, or anything silly like that please.
 project(IoLanguage)
 
+# OMF
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/extras/nsis")
+
 # Don't want a coloured Makefile. On some platforms, the blue that is used is
 # so dark it's illegible.
 set(CMAKE_COLOR_MAKEFILE off)
@@ -100,12 +103,24 @@ copy_files(iovm_headers ${PROJECT_SOURCE_DIR}/libs/iovm/source/*.h ${CMAKE_CURRE
 set(CPACK_SET_DESTDIR "OFF")
 set(CPACK_PACKAGE_NAME "IoLanguage")
 set(CPACK_PACKAGE_VENDOR "CMake.org")
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Io - CPack Component Installation Example")
+set(CPACK_RESOURCE_FILE_LICENSE ${PROJECT_SOURCE_DIR}/license/bsd_license.txt)
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Io - The Language")
 set(CPACK_PACKAGE_VERSION "1.0.0")
 set(CPACK_PACKAGE_VERSION_MAJOR "1")
 set(CPACK_PACKAGE_VERSION_MINOR "0")
 set(CPACK_PACKAGE_VERSION_PATCH "0")
 set(CPACK_PACKAGE_INSTALL_DIRECTORY "Io")
+
+
+set(CPACK_NSIS_MODIFY_PATH "ON")
+set(CPACK_NSIS_MENU_LINKS "http://www.iolanguage.com" "IoLanguage Web Site")
+#set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS "
+#  !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
+#  CreateDirectory "$SMPROGRAMS\\\\$ICONS_GROUP"
+#  CreateShortCut "$SMPROGRAMS\\\\$ICONS_GROUP\\\\Io CLI.lnk" "$INSTDIR\\\\bin\\\\io.exe"
+#  CreateShortCut "$DESKTOP\\\\Io CLI.lnk" "$INSTDIR\\\\bin\\\\io.exe"
+#  !insertmacro MUI_STARTMENU_WRITE_END
+#")
 
 include(CPack)
 
