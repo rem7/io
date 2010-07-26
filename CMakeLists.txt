@@ -100,27 +100,51 @@ copy_files(garbagecollector_headers ${PROJECT_SOURCE_DIR}/libs/garbagecollector/
 copy_files(iovm_headers ${PROJECT_SOURCE_DIR}/libs/iovm/source/*.h ${CMAKE_CURRENT_BINARY_DIR}/_build/headers)
 
 
-set(CPACK_SET_DESTDIR "OFF")
-set(CPACK_PACKAGE_NAME "IoLanguage")
-set(CPACK_PACKAGE_VENDOR "CMake.org")
-set(CPACK_RESOURCE_FILE_LICENSE ${PROJECT_SOURCE_DIR}/license/bsd_license.txt)
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Io - The Language")
-set(CPACK_PACKAGE_VERSION "1.0.0")
-set(CPACK_PACKAGE_VERSION_MAJOR "1")
-set(CPACK_PACKAGE_VERSION_MINOR "0")
-set(CPACK_PACKAGE_VERSION_PATCH "0")
-set(CPACK_PACKAGE_INSTALL_DIRECTORY "Io")
 
+# Packaging stuff
 
-set(CPACK_NSIS_MODIFY_PATH "ON")
-set(CPACK_NSIS_MENU_LINKS "http://www.iolanguage.com" "IoLanguage Web Site")
-#set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS "
-#  !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
-#  CreateDirectory "$SMPROGRAMS\\\\$ICONS_GROUP"
-#  CreateShortCut "$SMPROGRAMS\\\\$ICONS_GROUP\\\\Io CLI.lnk" "$INSTDIR\\\\bin\\\\io.exe"
-#  CreateShortCut "$DESKTOP\\\\Io CLI.lnk" "$INSTDIR\\\\bin\\\\io.exe"
-#  !insertmacro MUI_STARTMENU_WRITE_END
-#")
+SET(CPACK_PACKAGE_NAME "IoLanguage")
+SET(CPACK_PACKAGE_VENDOR "iolanguage.com")
+SET(CPACK_PACKAGE_CONTACT "iolanguage@yahoogroups.com")
+SET(CPACK_RESOURCE_FILE_LICENSE ${PROJECT_SOURCE_DIR}/license/bsd_license.txt)
+SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Io - The Language")
+SET(CPACK_PACKAGE_VERSION "1.0.0")
+SET(CPACK_PACKAGE_VERSION_MAJOR "1")
+SET(CPACK_PACKAGE_VERSION_MINOR "0")
+SET(CPACK_PACKAGE_VERSION_PATCH "0")
+SET(CPACK_PACKAGE_INSTALL_DIRECTORY "io")
+
+IF(WIN32 AND NOT CYGWIN)
+	SET(CPACK_SET_DESTDIR "OFF")
+	SET(CPACK_NSIS_MODIFY_PATH "ON")
+	SET(CPACK_NSIS_MENU_LINKS "http://www.iolanguage.com" "IoLanguage Web Site")
+	#SET(CPACK_NSIS_EXTRA_INSTALL_COMMANDS "
+	#  !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
+	#  CreateDirectory "$SMPROGRAMS\\\\$ICONS_GROUP"
+	#  CreateShortCut "$SMPROGRAMS\\\\$ICONS_GROUP\\\\Io CLI.lnk" "$INSTDIR\\\\bin\\\\io.exe"
+	#  CreateShortCut "$DESKTOP\\\\Io CLI.lnk" "$INSTDIR\\\\bin\\\\io.exe"
+	#  !insertmacro MUI_STARTMENU_WRITE_END
+	#")
+ENDIF(WIN32 AND NOT CYGWIN)
+
+IF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+	SET(CPACK_SET_DESTDIR "ON")
+
+	FIND_PROGRAM(DPKG_CMD dpkg)
+	IF(DPKG_CMD)
+		SET(CPACK_GENERATOR ${CPACK_GENERATOR} DEB)
+	ELSE(DPKG_CMD)
+		MESSAGE( STATUS "dpkg binary not found, not building debian package" )
+	ENDIF(DPKG_CMD)
+
+	FIND_PROGRAM(RPMBUILD_CMD rpmbuild)
+	IF(RPMBUILD_CMD)
+		SET( CPACK_GENERATOR ${CPACK_GENERATOR} RPM )
+	ELSE(RPMBUILD_CMD)
+		MESSAGE( STATUS "rpmbuild binary not found, not building rpm package" )
+	ENDIF(RPMBUILD_CMD)
+ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+
 
 include(CPack)
 
