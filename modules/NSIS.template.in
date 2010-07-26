@@ -689,9 +689,11 @@ Section "-Core installation"
   ;Create shortcuts
   CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
 @CPACK_NSIS_CREATE_ICONS@
+  IntCmp $INSTALL_DESKTOP 0 noDesktopIcon
 @CPACK_NSIS_CREATE_ICONS_EXTRA@
+  noDesktopIcon:
   CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
-
+  
   ;Read a value from an InstallOptions INI file
   !insertmacro MUI_INSTALLOPTIONS_READ $DO_NOT_ADD_TO_PATH "NSIS.InstallOptions.ini" "Field 2" "State"
   !insertmacro MUI_INSTALLOPTIONS_READ $ADD_TO_PATH_ALL_USERS "NSIS.InstallOptions.ini" "Field 3" "State"
@@ -720,7 +722,7 @@ Section "-Core installation"
 
 SectionEnd
 
-Section "-Add to path"
+section "-Add to path"
   StrCmp "@CPACK_NSIS_MODIFY_PATH@" "ON" 0 doNotAddToPath
   StrCmp $DO_NOT_ADD_TO_PATH "1" doNotAddToPath 0
     Push $INSTDIR\bin
@@ -847,7 +849,9 @@ Section "Uninstall"
 
   Delete "$SMPROGRAMS\$MUI_TEMP\Uninstall.lnk"
 @CPACK_NSIS_DELETE_ICONS@
+  IntCmp $INSTALL_DESKTOP 0 noDesktopIcon
 @CPACK_NSIS_DELETE_ICONS_EXTRA@
+  noDesktopIcon:
 
   ;Delete empty start menu parent diretories
   StrCpy $MUI_TEMP "$SMPROGRAMS\$MUI_TEMP"
@@ -866,7 +870,7 @@ Section "Uninstall"
   ; try to fix it.
   StrCpy $MUI_TEMP "$START_MENU"
   Delete "$SMPROGRAMS\$MUI_TEMP\Uninstall.lnk"
-@CPACK_NSIS_DELETE_ICONS_EXTRA@
+;@CPACK_NSIS_DELETE_ICONS_EXTRA@
 
   ;Delete empty start menu parent diretories
   StrCpy $MUI_TEMP "$SMPROGRAMS\$MUI_TEMP"
@@ -883,8 +887,10 @@ Section "Uninstall"
 
   DeleteRegKey /ifempty SHCTX "Software\@CPACK_PACKAGE_VENDOR@\@CPACK_PACKAGE_INSTALL_REGISTRY_KEY@"
 
-  Push $INSTDIR\bin
   StrCmp $DO_NOT_ADD_TO_PATH_ "1" doNotRemoveFromPath 0
+    Push $INSTDIR\bin
+    Call un.RemoveFromPath
+    Push $INSTDIR\lib
     Call un.RemoveFromPath
   doNotRemoveFromPath:
 SectionEnd
