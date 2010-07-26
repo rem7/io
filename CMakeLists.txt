@@ -27,9 +27,6 @@ cmake_minimum_required(VERSION 2.8)
 # spaces, or anything silly like that please.
 project(IoLanguage)
 
-# OMF
-set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/extras/nsis")
-
 # Don't want a coloured Makefile. On some platforms, the blue that is used is
 # so dark it's illegible.
 set(CMAKE_COLOR_MAKEFILE off)
@@ -99,10 +96,7 @@ copy_files(basekit_headers ${PROJECT_SOURCE_DIR}/libs/basekit/source/*.h ${CMAKE
 copy_files(garbagecollector_headers ${PROJECT_SOURCE_DIR}/libs/garbagecollector/source/*.h ${CMAKE_CURRENT_BINARY_DIR}/_build/headers)
 copy_files(iovm_headers ${PROJECT_SOURCE_DIR}/libs/iovm/source/*.h ${CMAKE_CURRENT_BINARY_DIR}/_build/headers)
 
-
-
 # Packaging stuff
-
 SET(CPACK_PACKAGE_NAME "IoLanguage")
 SET(CPACK_PACKAGE_VENDOR "iolanguage.com")
 SET(CPACK_PACKAGE_CONTACT "iolanguage@yahoogroups.com")
@@ -112,19 +106,24 @@ SET(CPACK_PACKAGE_VERSION "1.0.0")
 SET(CPACK_PACKAGE_VERSION_MAJOR "1")
 SET(CPACK_PACKAGE_VERSION_MINOR "0")
 SET(CPACK_PACKAGE_VERSION_PATCH "0")
-SET(CPACK_PACKAGE_INSTALL_DIRECTORY "io")
+SET(CPACK_PACKAGE_INSTALL_DIRECTORY "Io")
 
 IF(WIN32 AND NOT CYGWIN)
 	SET(CPACK_SET_DESTDIR "OFF")
+	SET(CPACK_NSIS_URL_INFO_ABOUT "http:\\\\\\\\www.iolanguage.com")
+	SET(CPACK_NSIS_HELP_LINK "http:\\\\\\\\www.iolanguage.com")
 	SET(CPACK_NSIS_MODIFY_PATH "ON")
-	SET(CPACK_NSIS_MENU_LINKS "http://www.iolanguage.com" "IoLanguage Web Site")
-	#SET(CPACK_NSIS_EXTRA_INSTALL_COMMANDS "
-	#  !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
-	#  CreateDirectory "$SMPROGRAMS\\\\$ICONS_GROUP"
-	#  CreateShortCut "$SMPROGRAMS\\\\$ICONS_GROUP\\\\Io CLI.lnk" "$INSTDIR\\\\bin\\\\io.exe"
-	#  CreateShortCut "$DESKTOP\\\\Io CLI.lnk" "$INSTDIR\\\\bin\\\\io.exe"
-	#  !insertmacro MUI_STARTMENU_WRITE_END
-	#")
+	SET(CPACK_NSIS_EXTRA_INSTALL_COMMANDS "WriteIniStr '\$INSTDIR\\\\IoLanguageWebSite.url' 'InternetShortcut' 'URL' '${CPACK_NSIS_URL_INFO_ABOUT}'")
+	SET(CPACK_NSIS_CREATE_ICONS "
+		CreateShortCut '\$SMPROGRAMS\\\\$STARTMENU_FOLDER\\\\Io CLI.lnk' '$INSTDIR\\\\bin\\\\io.exe'
+		CreateShortCut '\$SMPROGRAMS\\\\$STARTMENU_FOLDER\\\\IoLanguage Web Site.lnk' '\$INSTDIR\\\\IoLanguageWebSite.url'
+	")
+	SET(CPACK_NSIS_CREATE_ICONS_EXTRA "CreateShortCut '\$DESKTOP\\\\Io CLI.lnk' '$INSTDIR\\\\bin\\\\io.exe'")
+	SET(CPACK_NSIS_DELETE_ICONS "
+		Delete '\$SMPROGRAMS\\\\$MUI_TEMP\\\\Io CLI.lnk'
+		Delete '\$SMPROGRAMS\\\\$MUI_TEMP\\\\IoLanguage Web Site.lnk'
+	")
+	SET(CPACK_NSIS_DELETE_ICONS_EXTRA "Delete '\$DESKTOP\\\\Io CLI.lnk'")
 ENDIF(WIN32 AND NOT CYGWIN)
 
 IF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
@@ -144,7 +143,6 @@ IF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 		MESSAGE( STATUS "rpmbuild binary not found, not building rpm package" )
 	ENDIF(RPMBUILD_CMD)
 ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-
 
 include(CPack)
 
