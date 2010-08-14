@@ -109,11 +109,23 @@ SET(CPACK_PACKAGE_VERSION_PATCH "0")
 SET(CPACK_PACKAGE_INSTALL_DIRECTORY ${CPACK_PACKAGE_NAME})
 
 IF(WIN32 AND NOT CYGWIN)
+	STRING(REGEX REPLACE "\\\\" "\\\\\\\\" VC_INSTALL_PATH "$ENV{VCINSTALLDIR}")
+	
 	SET(CPACK_SET_DESTDIR "OFF")
-	SET(CPACK_NSIS_URL_INFO_ABOUT "http:\\\\\\\\www.iolanguage.com")
-	SET(CPACK_NSIS_HELP_LINK "http:\\\\\\\\www.iolanguage.com")
+	SET(CPACK_NSIS_URL_INFO_ABOUT "http://www.iolanguage.com")
+	SET(CPACK_NSIS_HELP_LINK "http://www.iolanguage.com")
 	SET(CPACK_NSIS_MODIFY_PATH "ON")
-	SET(CPACK_NSIS_EXTRA_INSTALL_COMMANDS "WriteIniStr '\$INSTDIR\\\\IoLanguageWebSite.url' 'InternetShortcut' 'URL' '${CPACK_NSIS_URL_INFO_ABOUT}'")
+	SET(CPACK_NSIS_EXTRA_INSTALL_COMMANDS "
+		WriteIniStr '\$INSTDIR\\\\IoLanguageWebSite.url' 'InternetShortcut' 'URL' '${CPACK_NSIS_URL_INFO_ABOUT}'
+		SetOutPath '\$INSTDIR\\\\lib'
+		SetOverwrite try
+		File '${VC_INSTALL_PATH}\\\\redist\\\\Debug_NonRedist\\\\x86\\\\Microsoft.VC90.DebugCRT\\\\*.*'
+	")
+	SET(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "
+		Delete '\$INSTDIR\\\\IoLanguageWebSite.url'
+		Delete '\$INSTDIR\\\\lib\\\\*.*'
+	")
+
 	SET(CPACK_NSIS_CREATE_ICONS "
 		CreateShortCut '\$SMPROGRAMS\\\\$STARTMENU_FOLDER\\\\Io CLI.lnk' '$INSTDIR\\\\bin\\\\io.exe'
 		CreateShortCut '\$SMPROGRAMS\\\\$STARTMENU_FOLDER\\\\IoLanguage Web Site.lnk' '\$INSTDIR\\\\IoLanguageWebSite.url'
