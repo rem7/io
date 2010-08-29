@@ -76,6 +76,7 @@ IoTag *IoSeq_newTag(void *state)
 	IoTag *tag = IoTag_newWithName_("Sequence");
 	IoTag_state_(tag, state);
 	IoTag_cloneFunc_(tag, (IoTagCloneFunc *)IoSeq_rawClone);
+	printf("SEQ: %p\n", IoSeq_rawClone);
 	IoTag_freeFunc_(tag, (IoTagFreeFunc *)IoSeq_free);
 	IoTag_compareFunc_(tag, (IoTagCompareFunc *)IoSeq_compare);
 	//IoTag_writeToStreamFunc_(tag, (IoTagWriteToStreamFunc *)IoSeq_writeToStream_);

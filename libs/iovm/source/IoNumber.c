@@ -67,6 +67,7 @@ IoTag *IoNumber_newTag(void *state)
 	IoTag *tag = IoTag_newWithName_("Number");
 	IoTag_state_(tag, state);
 	IoTag_cloneFunc_(tag, (IoTagCloneFunc *)IoNumber_rawClone);
+	printf("NUMBER: %p \n", IoNumber_rawClone);
 	IoTag_freeFunc_(tag, (IoTagFreeFunc *)IoNumber_free);
 	IoTag_compareFunc_(tag, (IoTagCompareFunc *)IoNumber_compare);
 	//IoTag_writeToStreamFunc_(tag, (IoTagWriteToStreamFunc *)IoNumber_writeToStream_);
